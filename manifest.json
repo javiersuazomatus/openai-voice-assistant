@@ -1,0 +1,32 @@
+{
+    "manifest_version": 2,
+    "name": "Asistente Meli",
+    "version": "1.0",
+    "description": "Asistente de voz que ejecuta operaciones sobre el sitio web de Mercadolibre",
+    "icons": {
+        "16": "micro-16.png",
+        "48": "micro-48.png",
+        "128": "micro-128.png"
+    },
+    "permissions": [
+        "tab",
+        "activeTab",
+        "https://tu-servicio-web.com/"
+    ],
+    "content_scripts": [
+      {
+        "matches": ["https://*/*", "https://*/*"],
+        "js": ["content.js"]
+      }
+    ],
+    "web_accessible_resources": [
+        "micro-48.png",
+        "micro-red-48.png",
+        "micro-await-48.png"
+    ],
+    "browser_action": {
+        "default_icon": "micro-48.png",
+        "default_title": "Asistente Meli",
+        "default_popup": "popup.html"
+    }
+}
