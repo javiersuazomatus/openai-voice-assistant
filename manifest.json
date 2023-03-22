@@ -19,6 +19,9 @@
         "js": ["content.js"]
       }
     ],
+    "background": {
+        "service_worker": "background.js"
+    },
     "web_accessible_resources": [
         "micro-48.png",
         "micro-red-48.png",
