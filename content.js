@@ -149,6 +149,11 @@ function sendParams () {
       });
 }
 
+function executeAction(actionNumber, data) {
+  const actions = [autoClick(data), inputText(data), goTo(data)]
+  actions[actionNumber];
+}
+
   /* OPEN IA INTEGRATION*/
 
   const OPENAI_API_KEY = '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'
