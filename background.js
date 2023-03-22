@@ -2,7 +2,7 @@
 //
 //     }
 // )
-
+console.log("estoy ON");
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse){
         console.log("an event has been received from" + JSON.stringify(sender));

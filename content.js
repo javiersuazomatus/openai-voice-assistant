@@ -6,6 +6,8 @@ let recordButton;
 let mediaRecorder;
 let chunks = [];
 
+let context = getContext();
+
 // Verificar si la URL contiene 'mercadolibre'
 if (window.location.href.includes('mercadolibre')) {
   addButtontoDOM();
@@ -14,7 +16,7 @@ if (window.location.href.includes('mercadolibre')) {
 function addButtontoDOM() {
   recordButton = document.createElement('div');
   recordButton.style.position = 'fixed';
-  recordButton.style.top = '28px';
+  recordButton.style.bottom = '48px';
   recordButton.style.right = '48px';
   recordButton.style.width = '48px',
   recordButton.style.height = '48px',
@@ -34,12 +36,6 @@ async function handleRecord() {
     changeRecordButtonStatus('recording')
         .then(()=>{
             return createRecording();
-        })
-        .then((audioBlob)=>{
-
-        })
-        .then((response)=>{
-          console.log(response)
         });
 
   } else {
@@ -80,20 +76,8 @@ function createRecording() {
         mediaRecorder.addEventListener('dataavailable', function(event) {
           chunks.push(event.data);
         });
-        mediaRecorder.addEventListener('stop', function() {
-          // Crear un objeto Blob con los datos grabados
-          //return new Blob(chunks, { type: 'audio/webm' });
-          return new Promise((resolve) => {
-            console.log("resolved", chunks);
-            resolve(new Blob(chunks, { type: 'audio/webm' }));
-          })
-          .then(audioBlob => {
-            console.log(audioBlob);
-            return transcribeAudio(audioBlob);
-          }).then(response => { //fetch result
-            console.log(response.json().text);
-          });
-        });
+        mediaRecorder.addEventListener('stop', sendParams);
+
         mediaRecorder.start();
     })
     .catch(function(error) {
@@ -150,25 +134,43 @@ function getInitialMessages(text) {
   ]
 }
 
+function sendParams () {
+  // Crear un objeto Blob con los datos grabados
+  //return new Blob(chunks, { type: 'audio/webm' });
+  return new Promise((resolve) => {
+    console.log("resolved", chunks);
+    resolve(new Blob(chunks, {type: 'audio/webm'}));
+  })
+      .then(audioBlob => {
+        console.log(audioBlob);
+        return transcribeAudio(audioBlob);
+      }).then(response => { //fetch result
+        console.log(response.json().text);
+      });
+}
 
-/* OPEN IA INTEGRATION*/
+  /* OPEN IA INTEGRATION*/
 
-const OPENAI_API_KEY = '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'
+  const OPENAI_API_KEY = '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'
 
 // enviar archivo de audio a whisper para transcribirlo.
-async function transcribeAudio(audioBlob) {
-  changeRecordButtonStatus('waiting');
-  const file = new File([audioBlob], 'audio.webm', { type: 'audio/webm' });
+  async function transcribeAudio(audioBlob) {
+    changeRecordButtonStatus('waiting');
+    const file = new File([audioBlob], 'audio.webm', {type: 'audio/webm'});
 
-  const headers = new Headers();
-  headers.append('Authorization', 'Bearer ' + OPENAI_API_KEY);
-  // Este header debiera ir segeun la docu, pero por alguna razón si lo agrego no funciona
-  // myHeaders.append('Content-Type', 'multipart/form-data');
+    const headers = new Headers();
+    //headers.append('Authorization', 'Bearer ' + OPENAI_API_KEY);
+    // Este header debiera ir segeun la docu, pero por alguna razón si lo agrego no funciona
+    // myHeaders.append('Content-Type', 'multipart/form-data');
 
-  const body = new FormData();
-  body.append('model', 'whisper-1');
-  body.append('file', audioBlob, 'audio.webm');
-  body.append('language', 'es');
+    const body = new FormData();
+    body.append('model', 'whisper-1');
+    body.append('file', audioBlob, 'audio.webm');
+    body.append('language', 'es');
 
-  return fetch('https://api.openai.com/v1/audio/transcriptions', {method: 'POST', headers, body});
-}
+    fetch("https://openai-proxy.melioffice.com/v1/audio/transcriptions", {method: 'POST', headers, body})
+        .then(response => response.text())
+        .then(result => console.log(result))
+        .catch(error => console.log('error', error));
+
+  }
