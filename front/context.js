@@ -8,11 +8,13 @@ function getContext(){
     var context;
 
     switch (currentURL) {
+
         case currentURL.includes("www.mercadolibre."):
             context = contextOptions[0];
             break;
 
         case currentURL.includes("my_purchases"):
+
             context = contextOptions[1];
             break;
 
