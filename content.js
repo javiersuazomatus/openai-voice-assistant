@@ -89,7 +89,9 @@ function createRecording() {
           })
           .then(audioBlob => {
             console.log(audioBlob);
-            transcribeAudio(audioBlob)
+            return transcribeAudio(audioBlob);
+          }).then(response => { //fetch result
+            console.log(response.json().text);
           });
         });
         mediaRecorder.start();
@@ -154,8 +156,8 @@ function getInitialMessages(text) {
 const OPENAI_API_KEY = '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'
 
 // enviar archivo de audio a whisper para transcribirlo.
-function transcribeAudio(audioBlob) {
-  changeStatusToRecordButton('waiting');
+async function transcribeAudio(audioBlob) {
+  changeRecordButtonStatus('waiting');
   const file = new File([audioBlob], 'audio.webm', { type: 'audio/webm' });
 
   const headers = new Headers();
@@ -168,11 +170,5 @@ function transcribeAudio(audioBlob) {
   body.append('file', audioBlob, 'audio.webm');
   body.append('language', 'es');
 
-  fetch('https://api.openai.com/v1/audio/transcriptions', {method: 'POST', headers, body})
-      .then(response => response.json())
-      .then(data => inferInstruction(data.text))
-      .catch(error => {
-        changeStatusToRecordButton('enabled');
-        console.log({error})
-      });
+  return fetch('https://api.openai.com/v1/audio/transcriptions', {method: 'POST', headers, body});
 }
