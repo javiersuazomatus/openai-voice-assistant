@@ -27,7 +27,5 @@ function inputText (data) {
 //por ejemplo para ir a mis compras, la url sería: https://myaccount.mercadolibre.cl/my_purchases/list#nav-header
 function goTo (data) {
 
-    const url = data.url;
-
-    window.location.href = url;
+    window.location.href = data.url;
 }
