@@ -15,7 +15,7 @@ function autoClick (data) {
 function inputText (data) {
 
     const target = data.target;
-    const search = data.search;
+    const search = data.searchText;
 
     const searchBar = document.getElementById(target);
 
