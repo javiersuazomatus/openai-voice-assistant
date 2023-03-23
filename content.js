@@ -154,9 +154,9 @@ async function sendParams () {
   });
 }
 
-function executeAction(actionNumber, data) {
-  const actions = [autoClick(data), inputText(data), goTo(data)]
-  actions[actionNumber];
+function executeAction(actionName, data) {
+  const actions = {autoClick, inputText, goTo, formSubmit}
+  actions[actionName](data);
 }
 
   /* OPEN IA INTEGRATION*/

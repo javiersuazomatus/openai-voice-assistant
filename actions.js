@@ -20,7 +20,6 @@ function inputText (data) {
     const searchBar = document.getElementById(target);
 
     searchBar.value = search;
-    searchBar.form.submit();
 }
 
 //en base a la url entregada se redirige al usuario a la sección que necesita
@@ -28,4 +27,13 @@ function inputText (data) {
 function goTo (data) {
 
     window.location.href = data.url;
+}
+
+//enviar un form
+function formSubmit (data) {
+
+    const target = data.target;
+    const form = document.querySelector(target);
+
+    form.submit();
 }
