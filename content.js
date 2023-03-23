@@ -134,19 +134,24 @@ function getInitialMessages(text) {
   ]
 }
 
-function sendParams () {
+async function sendParams () {
   // Crear un objeto Blob con los datos grabados
   //return new Blob(chunks, { type: 'audio/webm' });
   return new Promise((resolve) => {
     console.log("resolved", chunks);
     resolve(new Blob(chunks, {type: 'audio/webm'}));
   })
-      .then(audioBlob => {
-        console.log(audioBlob);
-        return transcribeAudio(audioBlob);
-      }).then(response => { //fetch result
-        console.log(response.json().text);
-      });
+  .then(audioBlob => {
+    console.log("transcribing");
+    return transcribeAudio(audioBlob);
+  }).then(response => { //fetch result
+    return response.json();
+  }).then(json => { //fetch result
+    console.log(json);
+    chrome.runtime.sendMessage({"type":"transcribed_text", "text": json.text, "context": "home"}, (response) => {
+      console.log(response);
+    });
+  });
 }
 
 function executeAction(actionNumber, data) {
@@ -173,9 +178,13 @@ function executeAction(actionNumber, data) {
     body.append('file', audioBlob, 'audio.webm');
     body.append('language', 'es');
 
-    fetch("https://openai-proxy.melioffice.com/v1/audio/transcriptions", {method: 'POST', headers, body})
-        .then(response => response.text())
-        .then(result => console.log(result))
-        .catch(error => console.log('error', error));
+    return fetch("https://openai-proxy.melioffice.com/v1/audio/transcriptions", {method: 'POST', headers, body});
+        // .then(response => response.text())
+        // .then(result => console.log(result))
+        // .catch(error => console.log('error', error));
 
+    // return fetch("https://openai-proxy.melioffice.com/v1/audio/transcriptions", {method: 'POST', headers, body})
+    //     .then(response => response.text())
+    //     .then(result => console.log(result))
+    //     .catch(error => console.log('error', error));
   }
